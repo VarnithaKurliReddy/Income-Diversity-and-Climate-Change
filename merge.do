@@ -9,8 +9,7 @@
        /*
        ** PURPOSE:      The pupose of the do-file is to use the merged data set and run some preliminary regressions.  
        ** OUTLINE:      PART 0:  Merge the five datasets
-                        PART 1:generate variables for climate
-						
+                        
 						
                       
 
@@ -36,9 +35,9 @@ save "$Finalfiles/climate.dta" ,replace
 
 use "$Finalfiles/income_diversity.dta" ,clear
 
-tostring                village                      survey_year,           replace
+tostring                village                      year,           replace
 
-gen                     temp=                        survey_year+           village
+gen                     temp=                        year+           village
 
 save "$Finalfiles/income_diversity.dta" ,replace
 
@@ -86,11 +85,15 @@ rename                   _merge                 merge2
 
 save                    "$Finalfiles/merged.dta" ,replace 
 
-keep                    if                     merge2==3
+drop                     merge1
 
-drop                    merge1                 merge2
+rename                   merge2      dummy_crop_diversity
 
-save                    "$Finalfiles/merged_restricted.dta" ,replace 
+label                    define       dummy_crop_diversity    1 "no_crop_diversity"   3 "yes_crop_diversity"
+
+label                    value        dummy_crop_diversity    dummy_crop_diversity
+
+save                    "$Finalfiles/merged.dta" ,replace 
 
 
 *
@@ -121,6 +124,8 @@ use                    "$Finalfiles/merged_restricted.dta" ,clear
 	 gen                 weather_variability= 1 if (rainfall_variability==1)| (rainfall_variability==2) | (rainfall_variability==3)  & temp_variability==1
 	 
 	 replace             weather_variability= 0 if rainfall_variability==0 | temp_variability==0
+	 
+	 
 
 save                    "$Finalfiles/merged_restricted.dta" ,replace 
 	 
